@@ -1,0 +1,8 @@
+INSTRUCTIONS TO USE THIS SIMPLE FEEDFORWARD SALES MODEL NEURAL NETWORK FOR YOUR DATASET AND ECONOMIC INDICATOR
+The base call is from the baseCall.py file. THis is where you will put your custom parameters in
+This leads directly into the test.py file. This executes two methods.
+These two methods are located in the same directory called addMonthsYearAlgo.py and salesAlgorithm.py
+I also utilize a pkl and csv file, recording the results on a file called predicted_sales.csv
+
+Any Questions, message me on discord RamenMode_#1200
+
