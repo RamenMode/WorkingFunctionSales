@@ -16,36 +16,63 @@ column = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
 dataNew['Month'] = column
 print(dataNew)
 
+#add economic indicators
+#didnt work
+#tradeDeficit = pd.read_csv('historical_country_United_States_indicator_Balance_of_Trade.csv')
+#tradeDeficitValues = tradeDeficit.iloc[:, 1]
+#print(tradeDeficitValues)
+#dataNew['tradeBalance'] = tradeDeficitValues
+
+
+#1st working one
+UnemploymentRate = pd.read_csv('historical_country_United_States_indicator_Employment_Rate.csv')
+UnemploymentRateValues = UnemploymentRate.iloc[:, 1]
+print('LOOK HERE')
+print(UnemploymentRateValues)
+dataNew['UnemploymentRateValues'] = UnemploymentRateValues
+
+#Inflation Rate 2nd working one
+InflationRate = pd.read_csv('historical_country_United_States_indicator_Inflation_Rate.csv')
+InflationRateValues = InflationRate.iloc[:, 3]
+print(InflationRateValues)
+dataNew['Inflation Rate'] = InflationRateValues
+
+#exports. didnt work
+#exportRate = pd.read_csv('historical_country_United_States_indicator_Exports.csv')
+#exportRateValues = exportRate.iloc[:, 3]
+#print(exportRateValues)
+#dataNew['Export Rate'] = exportRateValues
+
 for i in range(0, 232):
     dataNew.iloc[i, 2] = dataNew.iloc[i, 2] + dataNew.iloc[i, 3]
 dataNew = dataNew.drop(columns = ['Used', 'Month '])
 dataNew = dataNew.rename(columns={'New': 'Total Sales'})
 print(dataNew)
 
-dataNew = dataNew[['Total Sales', 'Year ', 'Month']]
+dataNew = dataNew[['Total Sales', 'Year ', 'Month', 'UnemploymentRateValues', 'Inflation Rate']] # add 'UnemploymentRateValues'
 print(dataNew)
 #What are we testing with?
-testData = dataNew.loc[dataNew['Year '] == 2019]
+testData = dataNew.loc[dataNew['Year '] == 2018]
 testData = testData.set_index([pd.Index(list(range(12)))])
 print(testData)
 anotherData = dataNew.set_index('Year ')
-trainData = anotherData.drop(2019, axis = 0)
+trainData = anotherData.drop(2018, axis = 0)
 trainData = trainData.reset_index()
-trainData = trainData[['Total Sales', 'Year ', 'Month']]
+trainData = trainData[['Total Sales', 'Year ', 'Month', 'UnemploymentRateValues', 'Inflation Rate']] # add 'UnemploymentRateValues'
 print(trainData)
 dates = trainData.index
 #print("dates: ", dates)
 
 # Now we isolate training and test
-X = trainData.iloc[:, 1:3]
+X = trainData.iloc[:, 1:5] # increase index
 Y = trainData.iloc[:, 0]
-Xi_Test = testData.iloc[:, 1:3]
+Xi_Test = testData.iloc[:, 1:5] # increase index
 Yi_Test = testData.iloc[:, 0]
 
 # Model Function
 XTrain, XTest, YTrain, YTest = train_test_split(X, Y, test_size = 0.2, shuffle = True)
 model = Sequential()
-model.add(Dense(450, activation = 'relu', input_dim=2))
+model.add(Dense(450, activation = 'relu', input_dim=4)) # increase input_dim
 model.add(Dense(200, activation = 'relu'))
 model.add(Dropout(0.2))
 model.add(Dense(100, activation = 'relu'))
@@ -56,7 +83,6 @@ model.compile(optimizer='adam', loss='mean_squared_error')
 
 
 model.fit(XTrain, YTrain, epochs=100, batch_size=128)
-
 #results from model
 loss = model.evaluate(XTest, YTest)
 print('sqrt loss', np.sqrt(loss))
